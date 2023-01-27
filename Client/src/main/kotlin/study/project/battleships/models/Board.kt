@@ -1,6 +1,6 @@
 package study.project.battleships.models
 
-object Board {
+class Board {
     var size: Int = 0
     var ships: List<Ship> = listOf()
     lateinit var board: ArrayList<ArrayList<Slot>>
