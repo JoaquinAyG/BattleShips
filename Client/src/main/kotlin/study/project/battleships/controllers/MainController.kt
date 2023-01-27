@@ -2,11 +2,17 @@ package study.project.battleships.controllers
 
 import study.project.battleships.extensions.show
 import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
+import javafx.scene.Parent
+import javafx.scene.Scene
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.TextField
 import javafx.scene.image.ImageView
+import javafx.stage.Stage
+import study.project.battleships.APP_NAME
+import study.project.battleships.BattleShipsClient
 import study.project.battleships.GITHUB_LINK
 import java.awt.Desktop
 import java.io.IOException
@@ -27,7 +33,15 @@ class MainController: Initializable {
     lateinit var et_port: TextField
 
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
-
+        btn_play.setOnAction {
+            val node = it.source as Button
+            val stage = node.scene.window as Stage
+            val root = FXMLLoader.load<Parent>(BattleShipsClient::class.java.getResource("game_view.fxml"))
+            val newScene = Scene(root, 600.0, 450.0)
+            println("Scene loaded")
+            stage.scene = newScene
+            stage.show()
+        }
     }
 
     fun linkGitHub() {
