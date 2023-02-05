@@ -9,5 +9,5 @@ object CommunicationUtils {
     const val SEND_POSITION = 3
     const val SEND_STATE = 4
     const val SEND_NAME = 5
-    const val SEND_TURN = 7
+    const val END = 8
 }

@@ -4,5 +4,5 @@ enum class SlotState {
     EMPTY,
     SHIP,
     HIT,
-    MISS
+    MISS;
 }

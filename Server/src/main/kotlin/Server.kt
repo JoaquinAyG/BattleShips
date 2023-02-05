@@ -1,22 +1,23 @@
+import utils.CommunicationUtils
 import java.net.ServerSocket
-import java.net.Socket
 
 
-fun main(args: Array<String>) {
-    val SocketServidor: ServerSocket
-    var SocketCliente: Socket?
-    var player: Player
-    var players: ArrayList<Player> = ArrayList<Player>()
-    var total_players = 0
-    val fin = false
-    SocketServidor = ServerSocket(8000)
+fun main() {
+    val socketServidor = ServerSocket(CommunicationUtils.DEFAULT_SERVER_PORT)
     println("Servidor disponible")
+    var end = false
+    var lastPlayer : Player? = null
 
-    while (!fin) {
-        SocketCliente = SocketServidor.accept()
-        player = Player(SocketCliente, players)
+    while (!end) {
+        val socketCliente = socketServidor.accept()
+        val player = Player(socketCliente)
+        if (lastPlayer != null) {
+            lastPlayer.opponent = player
+            player.opponent = lastPlayer
+        } else {
+            lastPlayer = player
+            end = true
+        }
         player.start()
-        total_players++
     }
-    SocketServidor.close()
 }
