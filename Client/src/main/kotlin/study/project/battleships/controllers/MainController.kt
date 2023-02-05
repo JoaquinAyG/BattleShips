@@ -12,7 +12,10 @@ import javafx.stage.Stage
 import study.project.battleships.BattleShipsClient
 import study.project.battleships.GITHUB_LINK
 import study.project.battleships.extensions.show
+import study.project.battleships.models.User
 import study.project.battleships.service.Client
+import study.project.battleships.utils.ClientProvider
+import study.project.battleships.utils.CommunicationUtils
 import java.awt.Desktop
 import java.io.IOException
 import java.net.Socket
@@ -36,12 +39,14 @@ class MainController: Initializable {
         btn_play.setOnAction {
             if (validateFields()) {
                 val port = createPort()
+                //Socket(port.first, port.second)
+                val client = Client(null, User(et_name.text.toString()))
+                ClientProvider.set(client)
                 val node = it.source as Button
                 val stage = node.scene.window as Stage
                 val root = FXMLLoader.load<Parent>(BattleShipsClient::class.java.getResource("game_view.fxml"))
                 val newScene = Scene(root, 600.0, 450.0)
                 println("Scene loaded")
-                //stage.userData = Client(et_name.text, Socket(port.first, port.second))
                 stage.scene = newScene
                 stage.show()
             }
@@ -50,19 +55,19 @@ class MainController: Initializable {
 
     private fun createPort() : Pair<String, Int> {
         val port = when {
-            et_port.text.isEmpty() -> "localhost:8080"
+            et_port.text.isEmpty() -> "${CommunicationUtils.DEFAULT_SERVER_HOST}:${CommunicationUtils.DEFAULT_SERVER_PORT}"
             et_port.text.split(":").size == 2 -> et_port.text
-            else -> "localhost:8080"
+            else -> "${CommunicationUtils.DEFAULT_SERVER_HOST}:${CommunicationUtils.DEFAULT_SERVER_PORT}"
         }
         try {
             val portInt = port.split(":")[1].toInt()
             if (portInt < 0 || portInt > 65535) {
                 Alert(Alert.AlertType.ERROR).show("Error", "Puerto incorrecto")
-                return Pair("localhost", 8080)
+                return Pair(CommunicationUtils.DEFAULT_SERVER_HOST, CommunicationUtils.DEFAULT_SERVER_PORT)
             }
         } catch (ex: NumberFormatException) {
             Alert(Alert.AlertType.ERROR).show("Error", "Puerto incorrecto")
-            return Pair("localhost", 8080)
+            return Pair(CommunicationUtils.DEFAULT_SERVER_HOST, CommunicationUtils.DEFAULT_SERVER_PORT)
         }
         return Pair(port.split(":")[0], port.split(":")[1].toInt())
     }

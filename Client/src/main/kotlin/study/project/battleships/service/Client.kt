@@ -1,24 +1,27 @@
 package study.project.battleships.service
 
+import study.project.battleships.models.User
 import java.io.*
 import java.net.Socket
 import java.util.*
 
 class Client(
-    val userName: String = "User",
-    socket: Socket
+    val user: User
 ) : Thread() {
 
+    lateinit var socket: Socket
     val id = UUID.randomUUID()
-    val sc = Scanner(System.`in`)
-    val inputStream: InputStream = socket.getInputStream()
-    val outputStream: OutputStream = socket.getOutputStream()
-    val dataInputStream: DataInputStream = DataInputStream(inputStream)
-    val dataOutputStream: PrintWriter = PrintWriter(outputStream, true)
-    val objecOutputStream: OutputStream = ObjectOutputStream(outputStream)
+    lateinit var inputStream: InputStream
+    lateinit var outputStream: OutputStream
+    lateinit var dataInputStream: DataInputStream
+    lateinit var dataOutputStream: PrintWriter
 
     override fun run() {
+        if (!::socket.isInitialized){
+            error("Socket is not initialized, remember to call the getConnection method before run")
+        }
         sendName()
+        receiveName()
         while (true) {
             val message = dataInputStream.readUTF()
             println(message)
@@ -26,7 +29,14 @@ class Client(
     }
 
     private fun sendName() {
-        dataOutputStream.println(userName)
+        dataOutputStream.println(user.name)
     }
 
+    fun getConnection(socket: Socket) {
+        this.socket = socket
+        inputStream = socket.getInputStream()
+        outputStream = socket.getOutputStream()
+        dataInputStream = DataInputStream(inputStream)
+        dataOutputStream = PrintWriter(outputStream, true)
+    }
 }

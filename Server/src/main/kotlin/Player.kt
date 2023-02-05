@@ -42,6 +42,7 @@ class Player(private val socket: Socket) : Thread() {
                     //Duda para kino8, cuando un usuario mete una flag, se ejecuta el comando, okey.
                     //Pero ese comando, tiene que mandar una flag al otro usuario, manda la inversa, o manda la misma?
                     //Ahora mismo esta hecho que mande la misma, pero estoy pensando que tendria que ser la inversa no?
+                    //Efectivamente es la inversa y el nunca recibe la flag que manda, la mitad de las flags son de envio y las otras de recepción
                     CommunicationUtils.RECEIVE_NAME -> {
                         sendFlag(CommunicationUtils.SEND_NAME)
                         opponent!!.sendMsg(nombre)

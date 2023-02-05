@@ -7,12 +7,13 @@ import javafx.scene.image.ImageView
 import javafx.scene.layout.GridPane
 import javafx.scene.text.Text
 import study.project.battleships.BattleShipsClient
+import study.project.battleships.models.Board
+import study.project.battleships.service.Client
+import study.project.battleships.utils.ClientProvider
 import java.net.URL
 import java.util.*
 
 class GameController: Initializable {
-
-    lateinit var iv_test: ImageView
 
     @FXML
     lateinit var tv_enemy_name: Text
@@ -20,8 +21,12 @@ class GameController: Initializable {
     lateinit var tv_name: Text
     @FXML
     lateinit var gp_board: GridPane
+    private lateinit var client: Client
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        client = ClientProvider.client
+        tv_name.text = client.user.name
+        println(client.user.name)
         for (i in 0..9) {
             for (j in 0..9) {
                 val stream = BattleShipsClient::class.java.getResourceAsStream("images/water.jpg")
@@ -29,8 +34,8 @@ class GameController: Initializable {
                 iv.fitWidth = 40.0
                 iv.fitHeight = 40.0
                 gp_board.add(iv, i, j)
-                println("Added image to $i, $j")
             }
         }
+
     }
 }
