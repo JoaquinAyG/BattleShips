@@ -1,7 +1,5 @@
 package study.project.battleships.models
 
-import javafx.geometry.Orientation
-
 class Board {
     var size: Int = 0
     var ships: List<Ship> = listOf()
@@ -9,20 +7,20 @@ class Board {
 
     fun createBoard(size: Int) {
         this.size = size
-        grid = ArrayList(size * size)
-        for (i in 0 until size) {
-            for (j in 0 until size) {
-                grid[i][j] = SlotState.EMPTY
+        grid = ArrayList<ArrayList<SlotState>>(size).apply {
+            for (i in 0 until size) {
+                add(ArrayList<SlotState>(size).apply { repeat(size) { add(SlotState.EMPTY) } })
             }
         }
     }
 
     init {
+        size = 10
         createBoard(10)
         ships = listOf(
-            Ship(3),
             Ship(5),
             Ship(4),
+            Ship(3),
             Ship(3),
             Ship(2)
         )

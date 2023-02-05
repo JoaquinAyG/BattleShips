@@ -31,6 +31,8 @@ class Player(private val socket: Socket) : Thread() {
             DatosSalida = FlujoDeSalida?.let { PrintWriter(it) }!!
             nombre = readMsg()
             println("El servidor recibe la conexión de $nombre")
+            //Enviamos el nombre al enemigo
+            opponent!!.sendMsg(nombre)
 
             //Se puede gestionar el final este fin, estilo, que el usuario cuando gane mande algo para cambiar este estado, o para reiniciar partida
             //Mientras tanto, el servidor nunca se apagará
@@ -49,14 +51,14 @@ class Player(private val socket: Socket) : Thread() {
                     }
 
                     CommunicationUtils.RECEIVE_POSITION -> { //Mandas la posicion a la que disparas?
-                        sendFlag(CommunicationUtils.SEND_POSITION)
                         val pos = receivePosition()
+                        sendFlag(CommunicationUtils.SEND_POSITION)
                         opponent!!.sendPosition(pos)
                     }
 
                     CommunicationUtils.RECEIVE_STATE -> {
-                        sendFlag(CommunicationUtils.SEND_STATE)
                         val state = receiveState()
+                        sendFlag(CommunicationUtils.SEND_STATE)
                         opponent!!.sendState(state)
                     }
 

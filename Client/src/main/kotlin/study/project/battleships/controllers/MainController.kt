@@ -12,9 +12,7 @@ import javafx.stage.Stage
 import study.project.battleships.BattleShipsClient
 import study.project.battleships.GITHUB_LINK
 import study.project.battleships.extensions.show
-import study.project.battleships.models.User
-import study.project.battleships.service.Client
-import study.project.battleships.utils.ClientProvider
+import study.project.battleships.utils.ClientController
 import study.project.battleships.utils.CommunicationUtils
 import java.awt.Desktop
 import java.io.IOException
@@ -40,11 +38,11 @@ class MainController: Initializable {
             if (validateFields()) {
                 val port = createPort()
                 //Socket(port.first, port.second)
-                val client = Client(null, User(et_name.text.toString()))
-                ClientProvider.set(client)
+                val credentials = Pair<String, Socket?> (et_name.text.toString(), null)
+                ClientController.setCredentials(credentials)
                 val node = it.source as Button
                 val stage = node.scene.window as Stage
-                val root = FXMLLoader.load<Parent>(BattleShipsClient::class.java.getResource("game_view.fxml"))
+                val root = FXMLLoader.load<Parent>(BattleShipsClient::class.java.getResource("initializing_view.fxml"))
                 val newScene = Scene(root, 600.0, 450.0)
                 println("Scene loaded")
                 stage.scene = newScene

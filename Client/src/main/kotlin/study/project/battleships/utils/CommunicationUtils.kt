@@ -11,4 +11,5 @@ object CommunicationUtils {
     const val RECEIVE_SLOT_TYPE = 4
     const val RECEIVE_NAME = 5
     const val RECEIVE_TURN = 7
+    const val END = 8
 }
