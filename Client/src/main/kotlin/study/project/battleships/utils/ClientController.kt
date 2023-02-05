@@ -41,7 +41,6 @@ object ClientController {
         return client.receiveName()
     }
     fun readFlagIsEnd() : Boolean{
-
         println("esperando flag")
         return client.readFlagIsEnd()
     }

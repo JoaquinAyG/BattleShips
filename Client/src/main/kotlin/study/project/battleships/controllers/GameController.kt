@@ -11,7 +11,6 @@ import study.project.battleships.models.EnemyBoard
 import study.project.battleships.models.Position
 import study.project.battleships.models.SlotState
 import study.project.battleships.utils.ClientController
-import java.io.InputStream
 import java.net.URL
 import java.util.*
 
@@ -23,7 +22,6 @@ class GameController: Initializable {
     lateinit var tv_name: Text
     @FXML
     lateinit var gp_board: GridPane
-    var enemyName = ClientController.client.enemyName
     val enemyBoard = EnemyBoard()
     private var turn = false
     override fun initialize(location: URL?, resources: ResourceBundle?) {
@@ -65,7 +63,6 @@ class GameController: Initializable {
     private fun gameLoop() {
         while (!turn) {
             val pos = ClientController.getPosition()
-            println("recibiendo pos")
             ClientController.sendSlotState(ClientController.client.user.board.grid[pos.x][pos.y])
             turn = true
         }
