@@ -7,9 +7,11 @@ import javafx.scene.image.ImageView
 import javafx.scene.layout.GridPane
 import javafx.scene.text.Text
 import study.project.battleships.BattleShipsClient
+import study.project.battleships.models.EnemyBoard
 import study.project.battleships.models.Position
-import study.project.battleships.service.Client
+import study.project.battleships.models.SlotState
 import study.project.battleships.utils.ClientController
+import java.io.InputStream
 import java.net.URL
 import java.util.*
 
@@ -21,14 +23,12 @@ class GameController: Initializable {
     lateinit var tv_name: Text
     @FXML
     lateinit var gp_board: GridPane
-    private lateinit var client: Client
-    val enemyName = ""
-    val enemyBoard = Array(10) { Array(10) { 0 } }
-    val turn = false
-
+    var enemyName = ClientController.client.enemyName
+    val enemyBoard = EnemyBoard()
+    private var turn = false
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        client = ClientController.client
-        tv_name.text = client.user.name
+        turn = ClientController.getTurn()
+        tv_name.text = ClientController.getClientName()
         for (i in 0..9) {
             for (j in 0..9) {
                 val stream = BattleShipsClient::class.java.getResourceAsStream("images/water.jpg")
@@ -38,20 +38,36 @@ class GameController: Initializable {
                 gp_board.add(iv, i, j)
             }
         }
-        turn = client.getTurn()
         gp_board.addEventHandler( javafx.scene.input.MouseEvent.MOUSE_CLICKED ) { event ->
-            if (turn) {
+            if (turn && enemyBoard.grid[event.x.toInt() / 40][event.y.toInt() / 40] == SlotState.EMPTY) {
                 val x = event.x.toInt() / 40
                 val y = event.y.toInt() / 40
-                val pos = Position(x, y)
-                client.sendPosition(pos)
-                val state = client.getSlotState()
-                val stream = BattleShipsClient::class.java.getResourceAsStream("images/ship.jpg")
+                ClientController.sendPosition(Position(x, y))
+                val state = ClientController.getSlotState()
+                enemyBoard.grid[x][y] = state
+                val stream = when (state) {
+                    SlotState.SHIP -> BattleShipsClient::class.java.getResourceAsStream("images/ship.jpg")
+                    SlotState.EMPTY -> BattleShipsClient::class.java.getResourceAsStream("images/miss.jpg")
+                    SlotState.HIT -> BattleShipsClient::class.java.getResourceAsStream("images/ship.jpg")
+                    SlotState.MISS -> BattleShipsClient::class.java.getResourceAsStream("images/miss.jpg")
+                }
                 val iv = ImageView(Image(stream))
                 iv.fitWidth = 40.0
                 iv.fitHeight = 40.0
                 gp_board.add(iv, x, y)
+                turn = false
+
             }
+            gameLoop()
+        }
+    }
+
+    private fun gameLoop() {
+        while (!turn) {
+            val pos = ClientController.getPosition()
+            println("recibiendo pos")
+            ClientController.sendSlotState(ClientController.client.user.board.grid[pos.x][pos.y])
+            turn = true
         }
     }
 }

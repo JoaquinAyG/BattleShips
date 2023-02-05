@@ -6,10 +6,10 @@ import java.net.Socket
 
 
 class Player(private val socket: Socket) : Thread() {
-    private var nombre: String? = null
-    private var FlujoDeEntrada: InputStream? = null
-    private var DatosEntrada: DataInputStream? = null
-    private var FlujoDeSalida: OutputStream? = null
+    lateinit var nombre: String
+    lateinit var FlujoDeEntrada: InputStream
+    lateinit var DatosEntrada: DataInputStream
+    lateinit var FlujoDeSalida: OutputStream
     private lateinit var DatosSalida: PrintWriter
     var opponent: Player? = null
     private var turn = false //Si el jugador se conecta segundo va segundo
@@ -27,18 +27,18 @@ class Player(private val socket: Socket) : Thread() {
         try {
             FlujoDeEntrada = socket.getInputStream()
             FlujoDeSalida = socket.getOutputStream()
-            DatosEntrada = FlujoDeEntrada?.let { DataInputStream(it) }
-            DatosSalida = FlujoDeSalida?.let { PrintWriter(it) }!!
+            DatosEntrada = DataInputStream(FlujoDeEntrada)
+            DatosSalida = PrintWriter(FlujoDeSalida, false)
             nombre = readMsg()
             println("El servidor recibe la conexión de $nombre")
-            //Enviamos el nombre al enemigo
-            opponent!!.sendMsg(nombre)
-
             //Se puede gestionar el final este fin, estilo, que el usuario cuando gane mande algo para cambiar este estado, o para reiniciar partida
             //Mientras tanto, el servidor nunca se apagará
             sendTurn()
+            println("El servidor manda turno a $nombre")
+
             while (!fin) {
                 comando = readFlag()
+                println("El servidor lee comando de $nombre, comando: $comando")
                 when (comando) {
 
                     //Duda para kino8, cuando un usuario mete una flag, se ejecuta el comando, okey.
@@ -46,24 +46,33 @@ class Player(private val socket: Socket) : Thread() {
                     //Ahora mismo esta hecho que mande la misma, pero estoy pensando que tendria que ser la inversa no?
                     //Efectivamente es la inversa y el nunca recibe la flag que manda, la mitad de las flags son de envio y las otras de recepción
                     CommunicationUtils.RECEIVE_NAME -> {
-                        sendFlag(CommunicationUtils.SEND_NAME)
+                        //opponent!!.sendFlag(CommunicationUtils.SEND_NAME)
+                        println("El servidor manda flag a ${opponent!!.nombre}")
                         opponent!!.sendMsg(nombre)
+                        println("El servidor manda nombre a ${opponent!!.nombre}")
+
                     }
 
                     CommunicationUtils.RECEIVE_POSITION -> { //Mandas la posicion a la que disparas?
                         val pos = receivePosition()
-                        sendFlag(CommunicationUtils.SEND_POSITION)
+                        println("El servidor recive posicion de ${nombre}")
+
+                        //opponent!!.sendFlag(CommunicationUtils.SEND_POSITION)
+                        println("El servidor manda flag a ${opponent!!.nombre}")
+
                         opponent!!.sendPosition(pos)
+                        println("El servidor manda pos a ${opponent!!.nombre}")
+
                     }
 
                     CommunicationUtils.RECEIVE_STATE -> {
                         val state = receiveState()
-                        sendFlag(CommunicationUtils.SEND_STATE)
+                        //opponent!!.sendFlag(CommunicationUtils.SEND_STATE)
                         opponent!!.sendState(state)
                     }
 
                     CommunicationUtils.END -> {
-                        opponent!!.sendFlag(CommunicationUtils.END)
+                        //opponent!!.sendFlag(CommunicationUtils.END)
                         fin = true
                     }
                 }
@@ -113,8 +122,7 @@ class Player(private val socket: Socket) : Thread() {
         //Como la comunicacion se hace con los input read, y estos van mejor con String, para simplificar codigo y no mezclar lectores de texto, pasamos las pos como "String"
         //Aunque, a la hora de gestionarlo se pasa a int y apañao.
         //Realmente, es sencillo Joaquin, lo primero que lee es la flag, y de ahi...
-        sendMsg(pos.x.toString())
-        sendMsg(pos.y.toString())
+        sendMsg(pos.x.toString() + " " + pos.y.toString())
     }
 
     //De esta forma, la función devuelve un Position, recuerdo que se manda como 2 string separados
@@ -123,9 +131,8 @@ class Player(private val socket: Socket) : Thread() {
     private fun receivePosition(): Position {
         val pos: Position
         //Como hemos dicho, la posicion se manda como 2 mensajes separados:
-        val x = readMsg()
-        val y = readMsg()
-        pos = Position(x.toInt(), y.toInt())
+        val xy = readMsg().split(" ")
+        pos = Position(xy[0].toInt(), xy[0].toInt())
         return pos
     }
 
@@ -142,6 +149,7 @@ class Player(private val socket: Socket) : Thread() {
     }
 
     private fun sendTurn() {
+        println(turn.toString())
         sendMsg(turn.toString())
     }
 }

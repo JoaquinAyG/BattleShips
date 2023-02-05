@@ -10,14 +10,17 @@ fun main() {
 
     while (!end) {
         val socketCliente = socketServidor.accept()
+        println("Cliente conectado")
         val player = Player(socketCliente)
         if (lastPlayer != null) {
+            println("Cliente con oponente")
             lastPlayer.opponent = player
             player.opponent = lastPlayer
         } else {
+            println("Cliente sin oponente")
             lastPlayer = player
-            end = true
         }
         player.start()
+        println("player.start()")
     }
 }

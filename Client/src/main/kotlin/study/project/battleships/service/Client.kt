@@ -9,46 +9,34 @@ import java.net.Socket
 import java.util.*
 
 class Client(
-    val user: User
-) : Thread() {
-
-    lateinit var socket: Socket
+    val user: User,
+    val socket: Socket
+) {
     val id = UUID.randomUUID()
     lateinit var inputStream: InputStream
     lateinit var outputStream: OutputStream
     lateinit var dataInputStream: DataInputStream
     lateinit var dataOutputStream: PrintWriter
+    var enemyName = ""
 
-    override fun run() {
-        if (!::socket.isInitialized){
-            error("Socket is not initialized, remember to call the getConnection method before run")
-        }
+    init {
+        getConnection()
         sendName()
-        receiveName()
-        while (true) {
-            val message = dataInputStream.readUTF()
-            println(message)
-        }
     }
 
     private fun sendName() {
-        dataOutputStream.println(user.name)
+        sendMsg(user.name)
     }
 
-    fun getConnection(socket: Socket) {
-        this.socket = socket
+    fun getConnection() {
         inputStream = socket.getInputStream()
         outputStream = socket.getOutputStream()
         dataInputStream = DataInputStream(inputStream)
-        dataOutputStream = PrintWriter(outputStream, true)
-    }
-
-    fun sendPos(pos: Position) {
-        dataOutputStream.println(pos.x)
-        dataOutputStream.println(pos.y)
+        dataOutputStream = PrintWriter(outputStream, false)
     }
 
     fun sendSlotState(state : SlotState){
+        sendFlag(CommunicationUtils.SEND_SLOT_TYPE)
         sendMsg(state.toString())
     }
 
@@ -62,15 +50,14 @@ class Client(
 
     fun getPosition(): Position {
         val pos: Position
-        val x = readMsg()
-        val y = readMsg()
-        pos = Position(x.toInt(), y.toInt())
+        val xy = readMsg().split(" ")
+        pos = Position(xy[0].toInt(), xy[0].toInt())
         return pos
     }
 
     fun sendPosition(pos: Position) {
-        sendMsg(pos.x.toString())
-        sendMsg(pos.y.toString())
+        sendFlag(CommunicationUtils.SEND_POSITION)
+        sendMsg(pos.x.toString() + " " + pos.y.toString())
     }
 
     fun readFlagIsEnd(): Boolean {
@@ -85,8 +72,9 @@ class Client(
         val msg: String
         var BytesLeidos: Int
         val Mensaje = ByteArray(80)
+        println("esperando msg")
         do {
-            BytesLeidos = dataInputStream.read(Mensaje)
+            BytesLeidos = dataInputStream!!.read(Mensaje)
         } while (BytesLeidos < 1)
         msg = String(Mensaje, 0, BytesLeidos)
         return msg
@@ -94,6 +82,17 @@ class Client(
 
     fun sendMsg(msg: String?) {
         dataOutputStream.print(msg)
+        dataOutputStream.flush()
+    }
+
+    fun getTurn(): Boolean {
+        val msg = readMsg().toBoolean()
+        println(msg.toString())
+        return msg
+    }
+
+    private fun sendFlag(flag: Int?) {
+        dataOutputStream.print(flag)
         dataOutputStream.flush()
     }
 }

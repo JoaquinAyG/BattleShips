@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="484.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="study.project.battleships.controllers.InitializingController">
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="484.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="study.project.battleships.controllers.InitializingController">
    <children>
       <GridPane fx:id="gp_board" layoutX="90.0" layoutY="78.0" maxHeight="368.0" maxWidth="368.0" minHeight="300.0" minWidth="300.0" prefHeight="308.0" prefWidth="305.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="90.0" AnchorPane.rightAnchor="89.0">
          <columnConstraints>
@@ -60,5 +60,6 @@
          </children>
       </GridPane>
       <Text layoutX="191.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Generating Board" />
+      <Button fx:id="btn_start" layoutX="408.0" layoutY="220.0" mnemonicParsing="false" onAction="#startGame" text="Start" AnchorPane.bottomAnchor="155.0" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="220.0" />
    </children>
 </AnchorPane>

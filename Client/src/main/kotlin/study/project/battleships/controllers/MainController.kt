@@ -37,8 +37,7 @@ class MainController: Initializable {
         btn_play.setOnAction {
             if (validateFields()) {
                 val port = createPort()
-                //Socket(port.first, port.second)
-                val credentials = Pair<String, Socket?> (et_name.text.toString(), null)
+                val credentials = Pair<String, Socket?> (et_name.text.toString(), Socket(port.first, port.second))
                 ClientController.setCredentials(credentials)
                 val node = it.source as Button
                 val stage = node.scene.window as Stage

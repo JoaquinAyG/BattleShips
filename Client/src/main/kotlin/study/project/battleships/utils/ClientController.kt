@@ -29,15 +29,27 @@ object ClientController {
         client.sendSlotState(state)
     }
     fun getPosition() : Position{
+        println("esperando posicion")
         return client.getPosition()
     }
     fun getSlotState() : SlotState{
+        println("esperando slotState")
         return client.getSlotState()
     }
     fun getName() : String{
+        println("esperando nombre")
         return client.receiveName()
     }
     fun readFlagIsEnd() : Boolean{
+
+        println("esperando flag")
         return client.readFlagIsEnd()
+    }
+    fun getTurn() : Boolean{
+        println("esperando turno")
+        return client.getTurn()
+    }
+    fun getClientName() : String{
+        return client.user.name
     }
 }
