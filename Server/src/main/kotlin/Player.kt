@@ -132,8 +132,6 @@ class Player(private val socket: Socket) : Thread() {
     //En los state pasará lo mismo, se manda todo como string.
     //POR QUE ADEMAS QUE TIPO DE CLASE ES SLOTSTATE XD
     //Me rayaste pila, no es un string, no es un int, no entiendo ._.
-
-
     //Es un enum, que es un tipo de clase, que tiene un valor, que es un string, que es lo que se manda(escrito por copilot)
     private fun sendState(state: SlotState) {
         sendMsg(state.toString()) //Suponiendo que state devuelve hit, miss... y se usa asi este tipo de clase
